@@ -29,7 +29,7 @@ const gameBoard = (() => {
 
 // Players are also going to be stored in objects
 
-const createPlayer = (name, player) => {
+function createPlayer(name, player){
     if(player === 1){
         symbol = 'X'
     }
@@ -46,8 +46,8 @@ const createPlayer = (name, player) => {
     }
 }
 
-const player1 = createPlayer('jacob', 1)
-const player2 = createPlayer('alex', 2)
+// const player1 = createPlayer('jacob', 1)
+// const player2 = createPlayer('alex', 2)
 // const player3 = createPlayer('bob', 3)
 // Create an object to control the flow of the game itself
 
@@ -98,4 +98,11 @@ const gameFlow = (() => {
     return {playTurn};
 })();
 
-game1 = gameFlow
+
+/*
+NEXT STEPS: 
+
+1. Make gameFlow a factory function instead of an IIFE 
+2. Make the UI 
+3. Make an IIFE displayController for the UI
+ */
