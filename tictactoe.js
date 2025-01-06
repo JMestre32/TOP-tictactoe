@@ -1,38 +1,48 @@
-console.log("bwuh");
-
 // Store the gameboard as an array inside of a gameBoard object
 
-function createGame(){
-    const game = [
-        ["X","O","O"],
-        ["O","X","O"],
-        ["O","X","X"]
-    ]
-    return {
-        board: game
-    }
-}
+const gameBoard = (() => {
+    let board = [
+        ["","",""],
+        ["","",""],
+        ["","",""]
+    ];
 
-const game = createGame()
+    const getBoard = () => board;
+    
+    const updateBoard = (row, col, mark) => {
+        if(board[row][col] === ""){
+            board[row][col] = mark;
+            return true
+        }
+        return false;
+    };
+
+    const resetBoard = () => {
+        board = [
+            ["","",""],
+            ["","",""],
+            ["","",""]
+        ];
+    };
+    return {getBoard, updateBoard, resetBoard}
+})();
 
 // Players are also going to be stored in objects
 
-function createPlayer(name, player){
+const createPlayer = (name, player) => {
     if(player === 1){
-        mark = 'X'
+        symbol = 'X'
     }
-    else if (player === 2){
-        mark = 'O'
+    else if(player ===2){
+        symbol = 'O'
     }
     else{
-        console.log("Sorry, " + name + ". Player number can only be 1 or 2.")
+        console.log("this is a 2 player game.")
     }
+
     return{
-        name,
-        mark,
-        saySymbol(){
-            console.log("Your symbol is: " + mark);
-        }
+        name, 
+        symbol
     }
 }
 
@@ -41,34 +51,51 @@ const player2 = createPlayer('alex', 2)
 // const player3 = createPlayer('bob', 3)
 // Create an object to control the flow of the game itself
 
-function gameFlow(game, player1, player2){
+const gameFlow = (() => {
+    let currentPlayer = player1;
 
-    if(
-        (game.board[0][0] === 'X' && game.board[0][1] === 'X' && game.board[0][2] === 'X') ||
-        (game.board[1][0] === 'X' && game.board[1][1] === 'X' && game.board[1][2] === 'X') ||
-        (game.board[2][0] === 'X' && game.board[2][1] === 'X' && game.board[2][2] === 'X') ||
-        (game.board[0][0] === 'X' && game.board[1][0] === 'X' && game.board[2][0] === 'X') ||
-        (game.board[0][1] === 'X' && game.board[1][1] === 'X' && game.board[2][1] === 'X') ||
-        (game.board[0][2] === 'X' && game.board[1][2] === 'X' && game.board[2][2] === 'X') ||
-        (game.board[0][0] === 'X' && game.board[1][1] === 'X' && game.board[2][2] === 'X')
-    ){
-        console.log(player1.name + ' Wins!')
+    const switchPlayer = () => {
+        currentPlayer = currentPlayer === player1 ? player2 : player1;
+    };
+
+    const playTurn = (row, col) => {
+        if(gameBoard.updateBoard(row, col, currentPlayer.symbol)){
+            if (checkWin(currentPlayer.symbol)){
+                console.log(`${currentPlayer.name} wins!`)
+                return;
+            }
+            if(isBoardFull()){
+                console.log("It's a tie!");
+                return;
+            }
+            switchPlayer();
+            } else{
+                console.log("Invalid move. Try again.")
+            }
+    };
+
+    const checkWin = (symbol) => {
+        const board = gameBoard.getBoard();
+
+        const winCons = [
+            [board[0][0], board[0][1], board[0][2]],
+            [board[1][0], board[1][1], board[1][2]],
+            [board[2][0], board[2][1], board[2][2]],
+            [board[0][0], board[1][0], board[2][0]],
+            [board[0][1], board[1][1], board[2][1]],
+            [board[0][2], board[1][2], board[2][2]],
+            [board[0][0], board[1][1], board[2][2]],
+            [board[0][2], board[1][1], board[2][0]]
+        ];
+
+        return winCons.some(pattern => pattern.every(cell => cell === symbol));
     }
-    else if(
-        (game.board[0][0] === 'O' && game.board[0][1] === 'O' && game.board[0][2] === 'O') ||
-        (game.board[1][0] === 'O' && game.board[1][1] === 'O' && game.board[1][2] === 'O') ||
-        (game.board[2][0] === 'O' && game.board[2][1] === 'O' && game.board[2][2] === 'O') ||
-        (game.board[0][0] === 'O' && game.board[1][0] === 'O' && game.board[2][0] === 'O') ||
-        (game.board[0][1] === 'O' && game.board[1][1] === 'O' && game.board[2][1] === 'O') ||
-        (game.board[0][2] === 'O' && game.board[1][2] === 'O' && game.board[2][2] === 'O') ||
-        (game.board[0][0] === 'O' && game.board[1][1] === 'O' && game.board[2][2] === 'O')
-    ){
-        console.log(player2.name + " Wins!")
-    }
-    else if(game.board.some(row => row.includes(""))){
-        console.log('play on')
-    }
-    else{
-        console.log('tie game')
-    }
-}
+
+    const isBoardFull = () => {
+        return gameBoard.getBoard().every(row => row.every(cell => cell !== ""));
+    };
+    
+    return {playTurn};
+})();
+
+game1 = gameFlow
