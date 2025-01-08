@@ -16,10 +16,11 @@ let gameBoard = (function () {
         playTurn : function (row, col, player){
             if(board[row][col] === " "){
                 board[row][col] = player.mark
+                return true
             }
             else{
-                console.log("Invalid move")
-                return
+                console.log("Invalid move try again")
+                return false
             }
         },
 
@@ -33,6 +34,25 @@ let gameBoard = (function () {
                 [" ", " ", " "],
                 [" ", " ", " "]
             ]
+        },
+
+        checkWin : function(activePlayer){
+            if(
+                // Rows
+                board[0][0] === activePlayer.mark && board[0][1] === activePlayer.mark && board[0][2] === activePlayer.mark ||
+                board[1][0] === activePlayer.mark && board[1][1] === activePlayer.mark && board[1][2] === activePlayer.mark ||
+                board[2][0] === activePlayer.mark && board[2][1] === activePlayer.mark && board[2][2] === activePlayer.mark ||
+                // Cols
+                board[0][0] === activePlayer.mark && board[1][0] === activePlayer.mark && board[2][0] === activePlayer.mark ||
+                board[0][1] === activePlayer.mark && board[1][1] === activePlayer.mark && board[2][1] === activePlayer.mark ||
+                board[0][2] === activePlayer.mark && board[1][2] === activePlayer.mark && board[2][2] === activePlayer.mark ||
+                // Diag
+                board[0][0] === activePlayer.mark && board[1][1] === activePlayer.mark && board[2][2] === activePlayer.mark ||
+                board[0][2] === activePlayer.mark && board[1][1] === activePlayer.mark && board[2][0] === activePlayer.mark
+            ){
+                console.log(`${activePlayer.name} wins!`)
+                this.resetBoard()
+            }
         }
         
     }
@@ -62,8 +82,11 @@ function createPlayer(name, player){
 // const player3 = createPlayer('bob', 3)
 // Create an object to control the flow of the game itself
 
-function gameController(player1, player2, board){
+function gameController(player1, player2){
     let activePlayer = player1;
+
+    const board = gameBoard;
+
 
     const switchPlayerTurn = () => {
         activePlayer = activePlayer === player1 ? player2 : player1;
@@ -74,31 +97,25 @@ function gameController(player1, player2, board){
 
     const printNewRound = () =>{
         board.printBoard();
-        console.log(`${activePlayer}'s Turn!`);
+        console.log(`${activePlayer.name}'s Turn!`);
     }
 
     const playRound = (row, col) =>{
         console.log(`Placing an ${activePlayer.mark} in position [${row}][${col}].`)
-        board.playTurn(row, col, activePlayer);
 
-        // Checking for a winner
-        if(
-            // Rows
-            board[0][0] === activePlayer.mark && board[0][1] === activePlayer.mark && board[0][2] === activePlayer.mark ||
-            board[1][0] === activePlayer.mark && board[1][1] === activePlayer.mark && board[1][2] === activePlayer.mark ||
-            board[2][0] === activePlayer.mark && board[2][1] === activePlayer.mark && board[2][2] === activePlayer.mark ||
-            // Cols
-            board[0][0] === activePlayer.mark && board[1][0] === activePlayer.mark && board[2][0] === activePlayer.mark ||
-            board[0][1] === activePlayer.mark && board[1][1] === activePlayer.mark && board[2][1] === activePlayer.mark ||
-            board[0][2] === activePlayer.mark && board[1][2] === activePlayer.mark && board[2][2] === activePlayer.mark ||
-            // Diag
-            board[0][0] === activePlayer.mark && board[1][1] === activePlayer.mark && board[2][2] === activePlayer.mark ||
-            board[0][2] === activePlayer.mark && board[1][1] === activePlayer.mark && board[2][0] === activePlayer.mark
-        ){
-            console.log(`${activePlayer} wins!`)
+        let validity = board.playTurn(row, col, activePlayer);
+        
+        if(validity){
+            // Checking for a winner
+            board.checkWin(activePlayer)
+
+
+            switchPlayerTurn();
+            printNewRound();
+
         }
-        switchPlayerTurn();
-        printNewRound();
+        else{
+        }
     }
 
     return{
