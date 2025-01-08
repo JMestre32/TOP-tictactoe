@@ -1,29 +1,108 @@
-console.log("bwuh");
+// Store the gameboard as an array inside of a gameBoard object
 
-// 2D Array? 
-let arr = [['x', 'x', 'o'], ['o', 'x', 'x'], ['o', 'x', 'o']
-];
+const gameBoard = (() => {
+    let board = [
+        ["","",""],
+        ["","",""],
+        ["","",""]
+    ];
 
-let winningArr = [['X', 'X', 'X'], ['o', 'o', 'x'], ['o', 'x', 'o']]
-let diagonalArr = [['X', 'O', 'X'], ['O', 'X', 'O'], ['O', 'X', 'X']]
-let oArr = [['O', 'X', 'O'], ['X', 'O', 'O'], ['X', 'X', 'O']];
-let tieArr = [['X', 'X', 'O'], ['X', 'O', 'O'], ['O', 'X', 'O']];
-
-function checkGame(game){
-    if(game[0][0] === 'X' && game[0][1] === 'X' && game[0][2] === 'X'
-        || game[1][0] === 'X' && game[1][1] === 'X' && game[1][2] === 'X' 
-        || game[2][0] === 'X' && game[2][1] === 'X' && game[2][2] === 'X'
-        || game[0][0] === 'X' && game[1][1] === 'X' && game[2][2] === 'X'
-    ){
-        console.log("GAME OVER 'X' wins!" );
-    }
-    else if(game[0][0] === 'O' && game[0][1] === 'O' && game[0][2] === 'O'
-        || game[1][0] === 'O' && game[1][1] === 'O' && game[1][2] === 'O' 
-        || game[2][0] === 'O' && game[2][1] === 'O' && game[2][2] === 'O'
-        || game[0][0] === 'O' && game[1][1] === 'O' && game[2][2] === 'O'){
-            console.log("GAME OVER 'O' wins!");
+    const getBoard = () => board;
+    
+    const updateBoard = (row, col, mark) => {
+        if(board[row][col] === ""){
+            board[row][col] = mark;
+            return true
         }
+        return false;
+    };
+
+    const resetBoard = () => {
+        board = [
+            ["","",""],
+            ["","",""],
+            ["","",""]
+        ];
+    };
+    return {getBoard, updateBoard, resetBoard}
+})();
+
+// Players are also going to be stored in objects
+
+function createPlayer(name, player){
+    if(player === 1){
+        symbol = 'X'
+    }
+    else if(player ===2){
+        symbol = 'O'
+    }
     else{
-        console.log("Tie game.")
+        console.log("this is a 2 player game.")
+    }
+
+    return{
+        name, 
+        symbol
     }
 }
+
+// const player1 = createPlayer('jacob', 1)
+// const player2 = createPlayer('alex', 2)
+// const player3 = createPlayer('bob', 3)
+// Create an object to control the flow of the game itself
+
+const gameFlow = (() => {
+    let currentPlayer = player1;
+
+    const switchPlayer = () => {
+        currentPlayer = currentPlayer === player1 ? player2 : player1;
+    };
+
+    const playTurn = (row, col) => {
+        if(gameBoard.updateBoard(row, col, currentPlayer.symbol)){
+            if (checkWin(currentPlayer.symbol)){
+                console.log(`${currentPlayer.name} wins!`)
+                return;
+            }
+            if(isBoardFull()){
+                console.log("It's a tie!");
+                return;
+            }
+            switchPlayer();
+            } else{
+                console.log("Invalid move. Try again.")
+            }
+    };
+
+    const checkWin = (symbol) => {
+        const board = gameBoard.getBoard();
+
+        const winCons = [
+            [board[0][0], board[0][1], board[0][2]],
+            [board[1][0], board[1][1], board[1][2]],
+            [board[2][0], board[2][1], board[2][2]],
+            [board[0][0], board[1][0], board[2][0]],
+            [board[0][1], board[1][1], board[2][1]],
+            [board[0][2], board[1][2], board[2][2]],
+            [board[0][0], board[1][1], board[2][2]],
+            [board[0][2], board[1][1], board[2][0]]
+        ];
+
+        return winCons.some(pattern => pattern.every(cell => cell === symbol));
+    }
+
+    const isBoardFull = () => {
+        return gameBoard.getBoard().every(row => row.every(cell => cell !== ""));
+    };
+    
+    return {playTurn};
+})();
+
+
+/*
+NEXT STEPS: 
+
+1. Make gameFlow a factory function instead of an IIFE 
+2. Make the UI 
+3. Make an IIFE displayController for the UI
+ */
