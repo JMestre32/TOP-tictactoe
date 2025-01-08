@@ -1,40 +1,51 @@
 // Store the gameboard as an array inside of a gameBoard object
 
-const gameBoard = (() => {
+let gameBoard = (function () {
     let board = [
-        ["","",""],
-        ["","",""],
-        ["","",""]
-    ];
+        [" ", " ", " "],
+        [" ", " ", " "],
+        [" ", " ", " "]
+    ]
 
-    const getBoard = () => board;
-    
-    const updateBoard = (row, col, mark) => {
-        if(board[row][col] === ""){
-            board[row][col] = mark;
-            return true
+    return{
+        
+        getBoard : function() {
+            return board
+        },
+
+        playTurn : function (row, col, player){
+            if(board[row][col] === " "){
+                board[row][col] = player.mark
+            }
+            else{
+                console.log("Invalid move")
+                return
+            }
+        },
+
+        printBoard : function(){
+            console.table(board)
+        },
+
+        resetBoard : function(){
+            board = [
+                [" ", " ", " "],
+                [" ", " ", " "],
+                [" ", " ", " "]
+            ]
         }
-        return false;
-    };
-
-    const resetBoard = () => {
-        board = [
-            ["","",""],
-            ["","",""],
-            ["","",""]
-        ];
-    };
-    return {getBoard, updateBoard, resetBoard}
+        
+    }
 })();
 
 // Players are also going to be stored in objects
 
 function createPlayer(name, player){
     if(player === 1){
-        symbol = 'X'
+        mark = 'X'
     }
     else if(player ===2){
-        symbol = 'O'
+        mark = 'O'
     }
     else{
         console.log("this is a 2 player game.")
@@ -42,7 +53,7 @@ function createPlayer(name, player){
 
     return{
         name, 
-        symbol
+        mark
     }
 }
 
@@ -51,54 +62,54 @@ function createPlayer(name, player){
 // const player3 = createPlayer('bob', 3)
 // Create an object to control the flow of the game itself
 
-const gameFlow = (() => {
-    let currentPlayer = player1;
+function gameController(player1, player2, board){
+    let activePlayer = player1;
 
-    const switchPlayer = () => {
-        currentPlayer = currentPlayer === player1 ? player2 : player1;
+    const switchPlayerTurn = () => {
+        activePlayer = activePlayer === player1 ? player2 : player1;
     };
-
-    const playTurn = (row, col) => {
-        if(gameBoard.updateBoard(row, col, currentPlayer.symbol)){
-            if (checkWin(currentPlayer.symbol)){
-                console.log(`${currentPlayer.name} wins!`)
-                return;
-            }
-            if(isBoardFull()){
-                console.log("It's a tie!");
-                return;
-            }
-            switchPlayer();
-            } else{
-                console.log("Invalid move. Try again.")
-            }
-    };
-
-    const checkWin = (symbol) => {
-        const board = gameBoard.getBoard();
-
-        const winCons = [
-            [board[0][0], board[0][1], board[0][2]],
-            [board[1][0], board[1][1], board[1][2]],
-            [board[2][0], board[2][1], board[2][2]],
-            [board[0][0], board[1][0], board[2][0]],
-            [board[0][1], board[1][1], board[2][1]],
-            [board[0][2], board[1][2], board[2][2]],
-            [board[0][0], board[1][1], board[2][2]],
-            [board[0][2], board[1][1], board[2][0]]
-        ];
-
-        return winCons.some(pattern => pattern.every(cell => cell === symbol));
+    const getActivePlayer = () =>{
+        return activePlayer
     }
 
-    const isBoardFull = () => {
-        return gameBoard.getBoard().every(row => row.every(cell => cell !== ""));
+    const printNewRound = () =>{
+        board.printBoard();
+        console.log(`${activePlayer}'s Turn!`);
+    }
+
+    const playRound = (row, col) =>{
+        console.log(`Placing an ${activePlayer.mark} in position [${row}][${col}].`)
+        board.playTurn(row, col, activePlayer);
+
+        // Checking for a winner
+        if(
+            // Rows
+            board[0][0] === activePlayer.mark && board[0][1] === activePlayer.mark && board[0][2] === activePlayer.mark ||
+            board[1][0] === activePlayer.mark && board[1][1] === activePlayer.mark && board[1][2] === activePlayer.mark ||
+            board[2][0] === activePlayer.mark && board[2][1] === activePlayer.mark && board[2][2] === activePlayer.mark ||
+            // Cols
+            board[0][0] === activePlayer.mark && board[1][0] === activePlayer.mark && board[2][0] === activePlayer.mark ||
+            board[0][1] === activePlayer.mark && board[1][1] === activePlayer.mark && board[2][1] === activePlayer.mark ||
+            board[0][2] === activePlayer.mark && board[1][2] === activePlayer.mark && board[2][2] === activePlayer.mark ||
+            // Diag
+            board[0][0] === activePlayer.mark && board[1][1] === activePlayer.mark && board[2][2] === activePlayer.mark ||
+            board[0][2] === activePlayer.mark && board[1][1] === activePlayer.mark && board[2][0] === activePlayer.mark
+        ){
+            console.log(`${activePlayer} wins!`)
+        }
+        switchPlayerTurn();
+        printNewRound();
+    }
+
+    return{
+        playRound,
+        getActivePlayer
     };
-    
-    return {playTurn};
-})();
 
 
+}
+
+const game = gameController();
 /*
 NEXT STEPS: 
 
