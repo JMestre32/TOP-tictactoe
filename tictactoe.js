@@ -126,7 +126,19 @@ function gameController(player1, player2){
 
 }
 
-const game = gameController();
+let game;
+
+const htmlGame = document.getElementById('board')
+const rows = 3;
+const cols = 3;
+
+for(let i = 0; i < rows; i++){
+    for(let j = 0; j <  cols; j++){
+        const cell = document.createElement('div');
+        cell.classList.add('grid-cell');
+        htmlGame.appendChild(cell)
+    }
+}
 /*
 NEXT STEPS: 
 
