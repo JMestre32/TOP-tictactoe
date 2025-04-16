@@ -17,10 +17,11 @@ const gameBoard = (function (){
     const placeMark = (row, col, player) => {
         if(board[row][col] === "0" && (0 < row < 2) && (0 < col < 2)){
             board[row][col] = player.playerMark;
+            return true
         }
         else{
-            console.log("invalid move");
-            return
+            console.log("invalid move, try again");
+            return false
         }
     }
     
@@ -73,13 +74,18 @@ const game = (function (){
     };
 
     const playRound = (row, col) => {
-        console.log(`Placing ${getActivePlayer().playerMark} for ${getActivePlayer().name}.`)
-        board.placeMark(row, col, activePlayer);
 
+        if(!(board.placeMark(row, col, activePlayer))){
+            return
+        }
+        else
+        {
+            console.log(`Placed ${getActivePlayer().playerMark} for ${getActivePlayer().name}.`)
 
+            switchTurns();
+            printNewRound();
 
-        switchTurns();
-        printNewRound();
+        }
     }
     
     printNewRound()
