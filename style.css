@@ -3,3 +3,59 @@
     padding: 0;
 }
 
+
+body{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background-color: #CFDFEF;
+}
+
+
+.header {
+    display: flex;
+    justify-content: center;
+}
+
+
+.board{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: min(90vw, 500px);
+    height: min(90vw, 500px);
+}
+
+
+
+
+.cell {
+
+    display: flex;  
+    justify-content: center;  
+    align-items: center;  
+    font-size: 2rem;  
+    cursor: pointer;  
+    border-right: 1px solid #333;  
+    border-bottom: 1px solid #333;  
+    
+}
+
+.cell:hover {
+    background-color: #B6CCE5;
+  }
+
+.cell:nth-child(3n) {
+    border-right: none;
+}
+
+
+.cell:nth-last-child(-n +3) {
+    border-bottom: none;
+}
+
+
+.playerTurn{
+    font-size: 100px;
+}

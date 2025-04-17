@@ -1,3 +1,5 @@
+
+
 //GAMEBOARD (we only need one instance of it, thus we should make a factory function and IMMEDIATELY invoke it using an IIFE)
 const gameBoard = (function (){
     const rows = 3;
@@ -10,7 +12,7 @@ const gameBoard = (function (){
             for (let i = 0; i < rows; i++){
                 board[i] = [];
                 for(let j = 0; j < cols; j++){
-                    board[i].push("0")
+                    board[i].push(" ")
                 }
             }
         }
@@ -18,7 +20,7 @@ const gameBoard = (function (){
     const getBoard = () => board;
 
     const placeMark = (row, col, player) => {
-        if (board[row][col] === "0" && row >= 0 && row <= 2 && col >= 0 && col <= 2)
+        if (board[row][col] === " " && row >= 0 && row <= 2 && col >= 0 && col <= 2)
             {
             board[row][col] = player.playerMark;
             //flag to check if a valid move was made
@@ -64,7 +66,7 @@ const gameBoard = (function (){
     }
 
     const isMarked = (currentMark) => {
-        return currentMark !== "0"
+        return currentMark !== " "
     }
 
     const checkTie = () => board.every(row => row.every(isMarked));
@@ -153,3 +155,59 @@ const game = (function (){
 
 })()
 
+
+const boardDisplay = (function (){
+    const playerTurnDiv = document.querySelector(".playerTurn");
+    const boardDiv = document.querySelector(".board");
+    
+    
+    const updateScreen = () => {
+        const board = gameBoard.getBoard()
+        const activePlayer = game.getActivePlayer().name
+
+        playerTurnDiv.textContent = `${activePlayer}'s Turn!`
+    }
+
+    const board  = gameBoard.getBoard();
+    board.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
+          const cellDiv = document.createElement("div");
+          cellDiv.classList.add("cell");
+          cellDiv.dataset.row = rowIndex;
+          cellDiv.dataset.column = colIndex;
+          cellDiv.textContent = cell; 
+          boardDiv.appendChild(cellDiv);
+        });
+      });
+
+    
+      function clickHandlerBoard(e) {
+        const row = parseInt(e.target.dataset.row);
+        const col = parseInt(e.target.dataset.column);
+
+        if (isNaN(row) || isNaN(col)) return;
+      
+        game.playRound(row, col);
+
+        refreshBoard();
+      }
+
+      boardDiv.addEventListener("click", clickHandlerBoard)
+
+      const refreshBoard = () => {
+        const currentBoard = gameBoard.getBoard();
+        const cellDivs = document.querySelectorAll(".cell");
+      
+        cellDivs.forEach(cell => {
+          const row = parseInt(cell.dataset.row);
+          const col = parseInt(cell.dataset.column);
+          cell.textContent = currentBoard[row][col];
+        });
+      
+        updateScreen();
+      };
+      
+
+    updateScreen()
+
+})()
