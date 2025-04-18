@@ -32,6 +32,7 @@ const gameBoard = (function (){
         }
     }
 
+    // kinda ass but the only way i know how to do it right now lmao
     const checkWin = () => {
         if(
             board[0][0] == "X" && board[0][1] == "X" && board[0][2] == "X" ||
@@ -69,6 +70,7 @@ const gameBoard = (function (){
         return currentMark !== " "
     }
 
+
     const checkTie = () => board.every(row => row.every(isMarked));
 
     
@@ -80,7 +82,8 @@ const gameBoard = (function (){
       return {getBoard, placeMark, printBoard, resetBoard, checkWin, checkTie}
 })()
 
-//PLAYER
+
+//PLAYER (FACTORY FUNCTION SO U CAN CREATE MULTIPLE)
 function createPlayer(name, pNumber){
     return{
         name: name,
@@ -118,11 +121,13 @@ const game = (function (){
 
     const playRound = (row, col) => {
 
+        // Check for invalid move, if placeMark returns false return
         if(!(board.placeMark(row, col, activePlayer))){
             return
         }
         else
         {
+            // check if move won the game
             if(board.checkWin()){
                 board.printBoard()
                 console.log(`${getActivePlayer().name} won! Starting new game.`)
@@ -132,6 +137,7 @@ const game = (function (){
                 return
             }
 
+            // check if board is full and no patterns from checkWin were made
             if(board.checkTie() && !board.checkWin()){
                 board.printBoard()
                 console.log("It's a tie!")
@@ -140,6 +146,7 @@ const game = (function (){
                 printNewRound()
                 return
             }
+
             console.log(`Placed ${getActivePlayer().playerMark} for ${getActivePlayer().name}.`)
 
             switchTurns();
@@ -148,7 +155,9 @@ const game = (function (){
         }
     }
     
+    // reset the board for initial game
     board.resetBoard()
+    // just for the console version of the game
     printNewRound()
 
     return {playRound, getActivePlayer}
@@ -157,24 +166,40 @@ const game = (function (){
 
 
 const boardDisplay = (function (){
+
+    // access the text below the game
     const playerTurnDiv = document.querySelector(".playerTurn");
+    // access the game board
     const boardDiv = document.querySelector(".board");
     
     
     const updateScreen = () => {
-        const board = gameBoard.getBoard()
         const activePlayer = game.getActivePlayer().name
 
+        // show whose turn it is
         playerTurnDiv.textContent = `${activePlayer}'s Turn!`
     }
 
+    // board is equal to current version of 3x3 array
     const board  = gameBoard.getBoard();
+    
+    /*
+    Loop through each row in the game board. For each cell in the current row (from left to right), 
+    create a <div> element to represent the cell. Assign it custom data attributes for its row and column index (rowIndex, colIndex)
+    so we can track its position. Set the div's text content to match the value stored in that cell (e.g., "X", "O", or empty), 
+    then append the div to the board container in the DOM.
+    */
     board.forEach((row, rowIndex) => {
         row.forEach((cell, colIndex) => {
           const cellDiv = document.createElement("div");
           cellDiv.classList.add("cell");
+          //use custom attributes to give cells their proper place within the array (i.e. first cell has rowIndex = 0 and colIndex = 0)
+          //what this is doing is telling the program to create a custom "data" attribute with names "row" and "column"
+          //when you use dev-tools to look at this you'll see each cell has attributes "data-row" and "data-column"
+          //SO just think of data as like a prefix? data-<attribute-name> type ish
           cellDiv.dataset.row = rowIndex;
           cellDiv.dataset.column = colIndex;
+
           cellDiv.textContent = cell; 
           boardDiv.appendChild(cellDiv);
         });
@@ -184,14 +209,15 @@ const boardDisplay = (function (){
       function clickHandlerBoard(e) {
         const row = parseInt(e.target.dataset.row);
         const col = parseInt(e.target.dataset.column);
-
-        if (isNaN(row) || isNaN(col)) return;
       
         game.playRound(row, col);
 
         refreshBoard();
       }
 
+      //when the boardDiv is clicked, you observe the element that was clicked INSIDE the board which is a cell
+      //then in the function clickHandlerBoard, the custome attributes data-row and data-column are used to call the function playRound
+      // afterward the board is refereshed. 
       boardDiv.addEventListener("click", clickHandlerBoard)
 
       const refreshBoard = () => {
