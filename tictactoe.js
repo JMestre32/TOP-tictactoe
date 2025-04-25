@@ -130,7 +130,7 @@ const game = (function (){
             // check if move won the game
             if(board.checkWin()){
                 board.printBoard()
-                console.log(`${getActivePlayer().name} won! Starting new game.`)
+                // console.log(`${getActivePlayer().name} won! Starting new game.`)
                 board.resetBoard()
                 activePlayer = players[0];
                 printNewRound()
@@ -140,14 +140,14 @@ const game = (function (){
             // check if board is full and no patterns from checkWin were made
             if(board.checkTie() && !board.checkWin()){
                 board.printBoard()
-                console.log("It's a tie!")
+                // console.log("It's a tie!")
                 board.resetBoard()
                 activePlayer = players[0];
                 printNewRound()
                 return
             }
 
-            console.log(`Placed ${getActivePlayer().playerMark} for ${getActivePlayer().name}.`)
+            // console.log(`Placed ${getActivePlayer().playerMark} for ${getActivePlayer().name}.`)
 
             switchTurns();
             printNewRound();
@@ -176,8 +176,19 @@ const boardDisplay = (function (){
     const updateScreen = () => {
         const activePlayer = game.getActivePlayer().name
 
-        // show whose turn it is
-        playerTurnDiv.textContent = `${activePlayer}'s Turn!`
+        // show whose turn it is/check if board is in Win/Tie state
+        if(gameBoard.checkWin()){
+            playerTurnDiv.textContent = `${activePlayer} won!`
+            console.log(`${activePlayer} won`)
+        }
+        else if((gameBoard.checkTie()) && !(gameBoard.checkWin())){
+            playerTurnDiv.textContent = "It's a tie!"
+            console.log("It's a tie.")
+
+        }
+        else{
+            playerTurnDiv.textContent = `${activePlayer}'s Turn!`
+        }
     }
 
     // board is equal to current version of 3x3 array
@@ -238,4 +249,3 @@ const boardDisplay = (function (){
 
 })()
 
-//hello THER
