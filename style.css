@@ -10,6 +10,7 @@ body{
     flex-direction: column;
     align-items: center;
     background-color: #CFDFEF;
+    color: #264653;
     font-size: 16px;
     height: 100vh;
     gap: 1em;
@@ -70,4 +71,19 @@ body{
 
 .playerTurn{
     font-size: 4rem;
+}
+
+button{
+    background-color: #7B5EA7;
+    color: white;
+    border-radius: 24px;
+    border: none;
+    height: 2rem;
+    width: 6rem;
+}
+
+
+button:hover{
+    background-color: #335D8A;
+    color: white;
 }

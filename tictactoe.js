@@ -119,6 +119,11 @@ const game = (function (){
         console.log(`${getActivePlayer().name}'s turn.`)
     };
 
+    const resetPlayer = () => {
+        activePlayer = players[0]
+    }
+
+
     const playRound = (row, col) => {
 
         // Check for invalid move, if placeMark returns false return
@@ -131,7 +136,6 @@ const game = (function (){
             if(board.checkWin()){
                 board.printBoard()
                 // console.log(`${getActivePlayer().name} won! Starting new game.`)
-                board.resetBoard()
                 activePlayer = players[0];
                 printNewRound()
                 return
@@ -140,8 +144,6 @@ const game = (function (){
             // check if board is full and no patterns from checkWin were made
             if(board.checkTie() && !board.checkWin()){
                 board.printBoard()
-                // console.log("It's a tie!")
-                board.resetBoard()
                 activePlayer = players[0];
                 printNewRound()
                 return
@@ -160,7 +162,7 @@ const game = (function (){
     // just for the console version of the game
     printNewRound()
 
-    return {playRound, getActivePlayer}
+    return {playRound, getActivePlayer, resetPlayer}
 
 })()
 
@@ -172,6 +174,7 @@ const boardDisplay = (function (){
     // access the game board
     const boardDiv = document.querySelector(".board");
     
+    const resetButton = document.querySelector(".resetButton")
     
     const updateScreen = () => {
         const activePlayer = game.getActivePlayer().name
@@ -243,7 +246,15 @@ const boardDisplay = (function (){
       
         updateScreen();
       };
-      
+
+
+      resetButton.addEventListener("click", () =>{
+        gameBoard.resetBoard()
+        game.resetPlayer()
+        const activePlayer = game.getActivePlayer()
+        playerTurnDiv.textContent = `${activePlayer}'s turn.`
+        refreshBoard()
+      })
 
     updateScreen()
 
