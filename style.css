@@ -87,3 +87,9 @@ button:hover{
     background-color: #335D8A;
     color: white;
 }
+
+.playerBox{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}

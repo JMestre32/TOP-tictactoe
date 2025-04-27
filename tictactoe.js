@@ -92,8 +92,8 @@ function createPlayer(name, pNumber){
     }
 }
 
-player1 = createPlayer("player 1", "1");
-player2 = createPlayer("player 2", "2");
+player1 = createPlayer("Player 1", "1");
+player2 = createPlayer("Player 2", "2");
 
 
 //GAME CONTROLLER/FLOW

@@ -11,6 +11,14 @@
     <div class="boardTurn">
         <div class = "board"></div>
         <div class = "playerTurn"></div>
+        <div class="playerBox">
+            <form class = "nameBox" action="#">
+                    <input type="text" id="player1" name="player1" placeholder="Default: Player 1" required>
+                    <input type="text" id="player2" name="player2" placeholder="Default: Player 2" required>
+                    <!-- If names aren't given, just start with player 1 and player 2 as names. If BOTH names are given,
+                     change player1.name and player2.name to whatever is in the textbox and change the screen text to "<NAME> it is your turn" -->
+            </form>
+        </div>
         <button class = "resetButton">Reset Board</button>
         <script src="tictactoe.js"></script>
     </div>
