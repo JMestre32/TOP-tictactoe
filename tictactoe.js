@@ -282,8 +282,16 @@ const boardDisplay = (function (){
         const p1Name = nameBox.player1.value
         const p2Name = nameBox.player2.value
 
-        game.setPlayerNames(p1Name, p2Name)
-        playerTurnDiv.textContent = `${game.getActivePlayer().name}'s turn.`
+        if(p1Name === "" || p2Name === ""){
+            playerTurnDiv.textContent = "Both players must have names."
+        }
+        else if (p1Name === p2Name){
+            playerTurnDiv.textContent = "Player 1 and 2 must have different names."
+        }
+        else{
+            game.setPlayerNames(p1Name, p2Name)
+            playerTurnDiv.textContent = `${game.getActivePlayer().name}'s turn.`
+        }
 
       })
 
