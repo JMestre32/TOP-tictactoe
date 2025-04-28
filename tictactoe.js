@@ -106,6 +106,11 @@ const game = (function (){
         player2
     ];
 
+    const setPlayerNames = (name1, name2) => {
+        players[0].name = name1 || "Player 1";
+        players[1].name = name2 || "Player 2";
+    };
+
     let activePlayer = players[0];
 
     const switchTurns = () => {
@@ -136,7 +141,6 @@ const game = (function (){
             if(board.checkWin()){
                 board.printBoard()
                 // console.log(`${getActivePlayer().name} won! Starting new game.`)
-                activePlayer = players[0];
                 printNewRound()
                 return
             }
@@ -162,7 +166,7 @@ const game = (function (){
     // just for the console version of the game
     printNewRound()
 
-    return {playRound, getActivePlayer, resetPlayer}
+    return {playRound, getActivePlayer, resetPlayer, setPlayerNames}
 
 })()
 
@@ -190,7 +194,12 @@ const boardDisplay = (function (){
 
         }
         else{
-            playerTurnDiv.textContent = `${activePlayer}'s Turn!`
+            if(game.getActivePlayer().name === "Player 1"){
+                playerTurnDiv.textContent = "Please enter player names."
+            }
+            else{
+                playerTurnDiv.textContent = `${activePlayer}'s Turn!`
+            }
         }
     }
 
@@ -232,7 +241,14 @@ const boardDisplay = (function (){
       //when the boardDiv is clicked, you observe the element that was clicked INSIDE the board which is a cell
       //then in the function clickHandlerBoard, the custome attributes data-row and data-column are used to call the function playRound
       // afterward the board is refereshed. 
-      boardDiv.addEventListener("click", clickHandlerBoard)
+      boardDiv.addEventListener("click",  (e) => {
+        if (game.getActivePlayer().name == "Player 1"){
+            window.alert("Please. Fill. Out. The. Player. Names. First.")
+        }
+        else{
+            clickHandlerBoard(e)
+        }
+        })
 
       const refreshBoard = () => {
         const currentBoard = gameBoard.getBoard();
@@ -254,6 +270,21 @@ const boardDisplay = (function (){
         const activePlayer = game.getActivePlayer()
         playerTurnDiv.textContent = `${activePlayer}'s turn.`
         refreshBoard()
+      })
+
+
+    //   capture submit button contents and reset player name
+      const submitButton = document.querySelector('.submitButton')
+      const nameBox = document.querySelector('.nameBox')
+
+      submitButton.addEventListener("click", (e) => {
+        e.preventDefault()
+        const p1Name = nameBox.player1.value
+        const p2Name = nameBox.player2.value
+
+        game.setPlayerNames(p1Name, p2Name)
+        playerTurnDiv.textContent = `${game.getActivePlayer().name}'s turn.`
+
       })
 
     updateScreen()
