@@ -170,7 +170,7 @@ const game = (function (){
 
 })()
 
-
+ 
 const boardDisplay = (function (){
 
     // access the text below the game
